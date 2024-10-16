@@ -583,7 +583,15 @@ void set_posestamp(T & out)
     out.pose.orientation.y = geoQuat.y;
     out.pose.orientation.z = geoQuat.z;
     out.pose.orientation.w = geoQuat.w;
-    
+
+}
+
+template<typename T>
+void set_twiststamp(T & out)
+{
+    out.twist.linear.x = state_point.vel(0);
+    out.twist.linear.y = state_point.vel(1);
+    out.twist.linear.z = state_point.vel(2);
 }
 
 void publish_odometry(const ros::Publisher & pubOdomAftMapped)
@@ -592,6 +600,7 @@ void publish_odometry(const ros::Publisher & pubOdomAftMapped)
     odomAftMapped.child_frame_id = lidar_frame;
     odomAftMapped.header.stamp = ros::Time().fromSec(lidar_end_time);// ros::Time().fromSec(lidar_end_time);
     set_posestamp(odomAftMapped.pose);
+    set_twiststamp(odomAftMapped.twist);
     pubOdomAftMapped.publish(odomAftMapped);
     auto P = kf.get_P();
     for (int i = 0; i < 6; i ++)
